@@ -1,0 +1,46 @@
+package com.aurelia.banking.service;
+
+import com.aurelia.banking.entity.Transaction;
+import com.aurelia.banking.exception.AccountNotFoundException;
+import com.aurelia.banking.repository.TransactionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class TransactionService {
+
+    private final TransactionRepository transactionRepository;
+
+    // ✅ CREATE / SAVE TRANSACTION
+    public Transaction saveTransaction(Transaction transaction) {
+        return transactionRepository.save(transaction);
+    }
+
+    // ✅ GET ALL TRANSACTIONS
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll();
+    }
+
+    // ✅ GET TRANSACTIONS BY ACCOUNT
+    public List<Transaction> getTransactionsByAccountId(String accountId) {
+        return transactionRepository.findByAccountId(accountId);
+    }
+
+    public List<Transaction> getTransactionsByLoanId(String loanId){
+        return transactionRepository.findByLoanId(loanId);
+    }
+
+    // ✅ GET SINGLE TRANSACTION
+    public Transaction getTransactionById(String id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException("Transaction not found with id " + id));
+    }
+
+    // ✅ DELETE TRANSACTION (optional, mostly admin use)
+    public void deleteTransaction(String id) {
+        transactionRepository.deleteById(id);
+    }
+}
