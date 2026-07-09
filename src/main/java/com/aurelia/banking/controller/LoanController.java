@@ -5,6 +5,7 @@ import com.aurelia.banking.dto.LoanPaymentRequest;
 import com.aurelia.banking.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public class LoanController {
 
     // ✅ GET ALL LOANS
     @GetMapping
-    public List<LoanDTO> getAllLoans() {
-        return loanService.getAllLoans();
+    public List<LoanDTO> getAllLoans(Authentication authentication) {
+        return loanService.getAllLoans(authentication.getName());
     }
 
     // ✅ CREATE LOAN

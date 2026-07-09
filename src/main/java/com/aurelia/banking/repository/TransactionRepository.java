@@ -10,4 +10,6 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
     List<Transaction> findByAccountId(String accountId);
     List<Transaction> findByLoanId(String loanId);
+
+    List<Transaction> findByAccountIdIn(List<String> accountIds);
 }

@@ -4,6 +4,7 @@ import com.aurelia.banking.dto.AccountDTO;
 import com.aurelia.banking.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -18,14 +19,20 @@ public class AccountController {
 
     // ✅ CREATE ACCOUNT
     @PostMapping
-    public AccountDTO createAccount(@Valid @RequestBody AccountDTO dto) {
-        return accountService.createAccount(dto);
+    public AccountDTO createAccount(
+            @Valid @RequestBody AccountDTO dto,
+            Authentication authentication) {
+
+        return accountService.createAccount(dto, authentication.getName());
+
     }
 
     // ✅ GET ALL ACCOUNTS
     @GetMapping
-    public List<AccountDTO> getAllAccounts() {
-        return accountService.getAllAccounts();
+    public List<AccountDTO> getAllAccounts(Authentication authentication) {
+
+        return accountService.getAllAccounts(authentication.getName());
+
     }
 
     // ✅ GET ACCOUNT BY ID

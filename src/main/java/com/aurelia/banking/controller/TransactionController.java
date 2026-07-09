@@ -3,6 +3,7 @@ package com.aurelia.banking.controller;
 import com.aurelia.banking.entity.Transaction;
 import com.aurelia.banking.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +17,11 @@ public class TransactionController {
 
     // ✅ GET ALL TRANSACTIONS
     @GetMapping
-    public List<Transaction> getAllTransactions() {
-        return transactionService.getAllTransactions();
+    public List<Transaction> getAllTransactions(
+            Authentication authentication) {
+
+        return transactionService.getAllTransactions(
+                authentication.getName());
     }
 
     // ✅ GET BY ACCOUNT

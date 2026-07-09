@@ -5,6 +5,7 @@ import com.aurelia.banking.dto.LoanPaymentRequest;
 import com.aurelia.banking.entity.Account;
 import com.aurelia.banking.entity.Loan;
 import com.aurelia.banking.entity.Transaction;
+import com.aurelia.banking.entity.User;
 import com.aurelia.banking.exception.AccountNotFoundException;
 import com.aurelia.banking.exception.InsufficientBalanceException;
 import com.aurelia.banking.exception.LoanNotFoundException;
@@ -12,6 +13,7 @@ import com.aurelia.banking.mapper.LoanMapper;
 import com.aurelia.banking.repository.AccountRepository;
 import com.aurelia.banking.repository.LoanRepository;
 import com.aurelia.banking.repository.TransactionRepository;
+import com.aurelia.banking.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,10 +30,17 @@ public class LoanService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final LoanMapper loanMapper;
+    private final UserRepository userRepository;
 
     // ✅ GET ALL LOANS
-    public List<LoanDTO> getAllLoans() {
-        return loanRepository.findAll()
+    public List<LoanDTO> getAllLoans(String email) {
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        return loanRepository
+                .findByCustomerId(String.valueOf(user.getId()))
                 .stream()
                 .map(loanMapper::toDTO)
                 .toList();

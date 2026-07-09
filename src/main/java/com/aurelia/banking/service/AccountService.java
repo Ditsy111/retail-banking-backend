@@ -3,11 +3,13 @@ package com.aurelia.banking.service;
 import com.aurelia.banking.dto.AccountDTO;
 import com.aurelia.banking.entity.Account;
 import com.aurelia.banking.entity.Transaction;
+import com.aurelia.banking.entity.User;
 import com.aurelia.banking.exception.AccountNotFoundException;
 import com.aurelia.banking.exception.InsufficientBalanceException;
 import com.aurelia.banking.mapper.AccountMapper;
 import com.aurelia.banking.repository.AccountRepository;
 import com.aurelia.banking.repository.TransactionRepository;
+import com.aurelia.banking.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,18 +25,41 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final AccountMapper accountMapper;
+    private final UserRepository userRepository;
 
     // ✅ CREATE ACCOUNT
-    public AccountDTO createAccount(AccountDTO dto) {
+    public AccountDTO createAccount(AccountDTO dto,
+                                    String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
         Account account = accountMapper.toEntity(dto);
-        account.setCreatedAt(LocalDateTime.now().toString());
-        Account saved = accountRepository.save(account);
+
+        account.setCustomerId(
+                String.valueOf(user.getId())
+        );
+
+        account.setCreatedAt(
+                LocalDateTime.now().toString()
+        );
+
+        Account saved =
+                accountRepository.save(account);
+
         return accountMapper.toDTO(saved);
     }
 
     // ✅ GET ALL ACCOUNTS
-    public List<AccountDTO> getAllAccounts() {
-        return accountRepository.findAll()
+    public List<AccountDTO> getAllAccounts(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        return accountRepository
+                .findByCustomerId(String.valueOf(user.getId()))
                 .stream()
                 .map(accountMapper::toDTO)
                 .toList();
