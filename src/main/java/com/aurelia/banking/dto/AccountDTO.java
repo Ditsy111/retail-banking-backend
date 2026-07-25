@@ -23,7 +23,6 @@ public class AccountDTO {
     @DecimalMin(value = "0.0", inclusive = true, message = "Balance cannot be negative")
     private BigDecimal balance;
 
-    @NotBlank(message = "Customer ID is required")
     private String customerId;
 
     private String createdAt;
