@@ -37,7 +37,8 @@ public class AccountService {
 
         Account account = accountMapper.toEntity(dto);
 
-        account.setCustomerId(
+        account.
+                setCustomerId(
                 String.valueOf(user.getId())
         );
 

@@ -24,7 +24,6 @@ public class AccountController {
             Authentication authentication) {
 
         return accountService.createAccount(dto, authentication.getName());
-
     }
 
     // ✅ GET ALL ACCOUNTS
