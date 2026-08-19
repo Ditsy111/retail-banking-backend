@@ -96,4 +96,16 @@ public class AuthController {
                 )
         );
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @RequestBody RefreshTokenRequest request
+    ) {
+
+        refreshTokenService.deleteByToken(
+                request.refreshToken()
+        );
+
+        return ResponseEntity.noContent().build();
+    }
 }

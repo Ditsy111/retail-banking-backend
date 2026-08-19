@@ -6,6 +6,7 @@ import com.aurelia.banking.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -56,5 +57,11 @@ public class RefreshTokenService {
                                 "Refresh token not found"
                         )
                 );
+    }
+
+    @Transactional
+    public void deleteByToken(String token) {
+
+        refreshTokenRepository.deleteByToken(token);
     }
 }
