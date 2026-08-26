@@ -1,8 +1,6 @@
 package com.aurelia.banking.controller;
 
-import com.aurelia.banking.dto.AuthResponse;
-import com.aurelia.banking.dto.LoginRequest;
-import com.aurelia.banking.dto.RegisterRequest;
+import com.aurelia.banking.dto.*;
 import com.aurelia.banking.entity.RefreshToken;
 import com.aurelia.banking.entity.User;
 import com.aurelia.banking.repository.UserRepository;
@@ -13,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import com.aurelia.banking.dto.RefreshTokenRequest;
 
 @RestController
 @RequestMapping("/auth")
@@ -35,30 +32,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(
+    public ResponseEntity<OtpLoginResponse> login(
             @Valid @RequestBody LoginRequest request) {
 
-        // 1. AuthService checks email + password
-        String accessToken =
+        String phoneNumber =
                 authService.login(request);
 
-        // 2. Find the user who just logged in
-        User user =
-                userRepository
-                        .findByEmail(request.getEmail())
-                        .orElseThrow();
-
-
-        // 3. Create and save refresh token
-        RefreshToken refreshToken =
-                refreshTokenService
-                        .createRefreshToken(user);
-
-        // 4. Return BOTH tokens
         return ResponseEntity.ok(
-                new AuthResponse(
-                        accessToken,
-                        refreshToken.getToken()
+                new OtpLoginResponse(
+                        "OTP required",
+                        phoneNumber
                 )
         );
     }

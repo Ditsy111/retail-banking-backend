@@ -16,6 +16,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final OtpService otpService;
 
     public void register(RegisterRequest request) {
 
@@ -44,19 +45,20 @@ public class AuthService {
 
         boolean passwordMatches =
                 passwordEncoder.matches(
-                        request.getPassword(), //this is the normal password from dto
-                        user.getPassword()); /*this is the hashed password(as password stored in users means in
-                                                database is stored in hashed format only so to fetch hash value we
-                                                take it from the database*/
-
+                        request.getPassword(),
+                        user.getPassword()
+                );
 
         if (!passwordMatches) {
             throw new RuntimeException("Password Invalid");
         }
 
-        return jwtService.generateToken(
-                user.getEmail()
+        otpService.generateOtp(
+                user.getPhoneNumber(),
+                "LOGIN"
         );
+
+        return user.getPhoneNumber();
     }
 
 
