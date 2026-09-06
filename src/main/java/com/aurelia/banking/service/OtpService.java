@@ -14,6 +14,7 @@ import java.time.Instant;
 public class OtpService {
 
     private final OtpRepository otpRepository;
+    private final TwilioSmsService twilioSmsService;
 
     private final SecureRandom secureRandom =
             new SecureRandom();
@@ -48,8 +49,10 @@ public class OtpService {
 
         otpRepository.save(otpEntity);
 
-        System.out.println(
-                "OTP for " + phoneNumber + ": " + otp
+        // Send OTP through Twilio
+        twilioSmsService.sendOtp(
+                phoneNumber,
+                otp
         );
 
         return otp;
@@ -62,6 +65,10 @@ public class OtpService {
             String otp,
             String purpose
     ) {
+
+        System.out.println("VERIFY PHONE = [" + phoneNumber + "]");
+        System.out.println("VERIFY OTP   = [" + otp + "]");
+        System.out.println("VERIFY PURPOSE = [" + purpose + "]");
 
         Otp otpEntity =
                 otpRepository
@@ -76,6 +83,7 @@ public class OtpService {
                                 )
                         );
 
+        System.out.println("OTP FOUND IN DATABASE!");
 
         if (otpEntity.getExpiryDate()
                 .isBefore(Instant.now())) {
@@ -87,7 +95,6 @@ public class OtpService {
             );
         }
 
-        // OTP can only be used once
         otpRepository.delete(otpEntity);
     }
 }
