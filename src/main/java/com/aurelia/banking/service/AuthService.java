@@ -61,6 +61,48 @@ public class AuthService {
         return user.getPhoneNumber();
     }
 
+    public void requestPasswordReset(String phoneNumber) {
+
+        userRepository
+                .findByPhoneNumber(phoneNumber)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        otpService.generateOtp(
+                phoneNumber,
+                "PASSWORD_RESET"
+        );
+    }
+
+    public void resetPassword(
+            String phoneNumber,
+            String otp,
+            String newPassword
+    ) {
+
+        // Verify the OTP
+        otpService.verifyOtp(
+                phoneNumber,
+                otp,
+                "PASSWORD_RESET"
+        );
+
+        // Find the user
+        User user = userRepository
+                .findByPhoneNumber(phoneNumber)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found")
+                );
+
+        // Encode and save new password
+        user.setPassword(
+                passwordEncoder.encode(newPassword)
+        );
+
+        userRepository.save(user);
+    }
+
+
 
     public String generateToken(String email) {
 

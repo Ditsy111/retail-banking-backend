@@ -2,6 +2,7 @@ package com.aurelia.banking.security;
 
 import com.aurelia.banking.service.CustomUserDetailsService;
 import com.aurelia.banking.service.JwtService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,32 +46,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        try {
+            String username =
+                    jwtService.extractUsername(jwt);
 
-        String username =
-                jwtService.extractUsername(jwt);
+            if (username != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
 
-        if (username != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails =
+                        customUserDetailsService.loadUserByUsername(username);
 
-            UserDetails userDetails =
-                    customUserDetailsService.loadUserByUsername(username);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
 
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+                    // Create Spring Security authentication object
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-                // Create Spring Security authentication object
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-
-                // Store authenticated user in SecurityContext
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(authToken);
+                    // Store authenticated user in SecurityContext
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(authToken);
+                }
             }
+
+        }catch(JwtException | IllegalArgumentException e){
+
         }
+
 
             filterChain.doFilter(request, response);
     }

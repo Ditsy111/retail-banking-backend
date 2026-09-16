@@ -46,6 +46,33 @@ public class AuthController {
         );
     }
 
+    @PostMapping("/password/request")
+    public ResponseEntity<String> requestPasswordReset(
+            @RequestBody PasswordResetRequest request
+    ) {
+
+        authService.requestPasswordReset(
+                request.phoneNumber()
+        );
+
+        return ResponseEntity.ok("Password reset OTP generated");
+    }
+
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<String> resetPassword(
+            @RequestBody PasswordResetVerifyRequest request
+    ) {
+
+        authService.resetPassword(
+                request.phoneNumber(),
+                request.otp(),
+                request.newPassword()
+        );
+
+        return ResponseEntity.ok("Password reset successfully");
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refreshToken(
             @RequestBody RefreshTokenRequest request
