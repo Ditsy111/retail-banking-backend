@@ -5,6 +5,7 @@ import com.aurelia.banking.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class TransactionController {
     }
 
     // (Optional admin)
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
         transactionService.deleteTransaction(id);

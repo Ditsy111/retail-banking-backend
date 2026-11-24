@@ -46,6 +46,11 @@ public class TransactionService {
                 .findByAccountIdIn(accountIds);
     }
 
+    // ✅ GET ALL TRANSACTIONS (ADMIN USE)
+    public List<Transaction> getEveryTransaction() {
+        return transactionRepository.findAll();
+    }
+    
     // ✅ GET TRANSACTIONS BY ACCOUNT
     public List<Transaction> getTransactionsByAccountId(String accountId) {
         return transactionRepository.findByAccountId(accountId);

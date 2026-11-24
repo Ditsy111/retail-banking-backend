@@ -1,10 +1,14 @@
 package com.aurelia.banking.service;
 
+import com.aurelia.banking.dto.AdminUserDTO;
 import com.aurelia.banking.dto.CurrentUserDTO;
 import com.aurelia.banking.dto.UpdateProfileRequest;
 import com.aurelia.banking.entity.User;
 import com.aurelia.banking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,6 +56,20 @@ public class UserService {
                 user.getPhoneNumber(),
                 user.getRole().name()
         );
+    }
+
+    public List<AdminUserDTO> listUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new AdminUserDTO(
+                        user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getPhoneNumber(),
+                        user.getRole().name()
+                ))
+                .toList();
     }
 
 }
