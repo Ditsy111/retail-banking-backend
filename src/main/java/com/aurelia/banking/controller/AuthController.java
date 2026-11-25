@@ -31,6 +31,14 @@ public class AuthController {
         return ResponseEntity.ok("User registered successfully");
     }
 
+    @PostMapping("/register/admin")
+    public ResponseEntity<String> registerAdmin(
+            @Valid @RequestBody RegisterRequest request
+    ){
+        authService.registerAdmin(request);
+        return ResponseEntity.ok("Admin registered successfully");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<OtpLoginResponse> login(
             @Valid @RequestBody LoginRequest request) {

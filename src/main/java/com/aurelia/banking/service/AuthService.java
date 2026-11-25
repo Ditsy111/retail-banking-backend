@@ -36,6 +36,21 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    public void registerAdmin(RegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+        User user = User.builder()
+                .email(request.getEmail())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .phoneNumber(request.getPhoneNumber())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.ADMIN)
+                .build();
+        userRepository.save(user);
+    }
+
     public String login(LoginRequest request) {
 
         User user = userRepository
